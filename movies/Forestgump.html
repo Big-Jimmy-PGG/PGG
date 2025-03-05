@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forrest gump</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .video-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        video {
+            border-radius: 10px;
+        }
+        input[type='range'] {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <h2>Enjoy the Video</h2>
+        <video id="video" width="800" height="450" controls>
+            <source src="Forrest Gump.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <input type="range" id="seek-bar" min="0" value="0" step="0.1">
+    </div>
+    
+    <script>
+        const video = document.getElementById('video');
+        const seekBar = document.getElementById('seek-bar');
+        
+        // Set the maximum range of the seek bar once metadata is loaded
+        video.addEventListener('loadedmetadata', () => {
+            seekBar.max = video.duration;
+        });
+
+        // Update the seek bar position during playback
+        video.addEventListener('timeupdate', () => {
+            // Check if the video is playing and update the seek bar accordingly
+            if (!seekBar.dragging) {
+                seekBar.value = video.currentTime;
+            }
+        });
+
+        // Flag to check if the seek bar is being dragged
+        let dragging = false;
+        
+        // Detect when the user starts dragging the seek bar
+        seekBar.addEventListener('mousedown', () => {
+            dragging = true;
+        });
+
+        // Detect when the user stops dragging the seek bar
+        seekBar.addEventListener('mouseup', () => {
+            dragging = false;
+        });
+
+        // Set the video current time when the user interacts with the seek bar
+        seekBar.addEventListener('input', () => {
+            video.currentTime = seekBar.value;
+        });
+
+        // Play the video if it was playing before seeking
+        seekBar.addEventListener('change', () => {
+            if (!video.paused) {
+                video.play();
+            }
+        });
+    </script>
+</body>
+</html>
