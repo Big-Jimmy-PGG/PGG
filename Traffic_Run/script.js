@@ -1,4 +1,14 @@
 window.focus(); // Capture keys right away (by default focus is on editor)
+document.addEventListener("keydown", function (event) {
+  if (event.key.toLowerCase() === "g") {
+      addVehicle();
+    
+  }
+});
+
+function addVehicle() {
+  console.log("Vehicle added!"); // Replace this with your actual function logic
+}
 
 // Pick a random value from an array
 function pickRandom(array) {

@@ -1,1 +1,114 @@
-<iframe title="My Frame" id="iframehtml5" width="100%" height="100%" src="/subway-surfers-game.embed?d=20241020" frameborder="0" border="0" scrolling="no" class="iframe-default" allowfullscreen="" data-wg-content="true"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Plinko</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #111; }
+        canvas { display: block; }
+        #balanceDisplay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon-es/0.20.0/cannon-es.js"></script>
+</head>
+<body>
+    <div id="balanceDisplay"></div>
+    <script>
+        let balance = localStorage.getItem("plinko_balance") ? parseFloat(localStorage.getItem("plinko_balance")) : 100;
+        document.getElementById("balanceDisplay").innerText = `Balance: $${balance}`;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const world = new CANNON.World();
+        world.gravity.set(0, -9.8, 0);
+
+        const pegs = [];
+        const balls = [];
+        const pegMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+        function createPegs() {
+            const spacing = 1.5;
+            for (let row = 0; row < 10; row++) {
+                for (let col = 0; col <= row; col++) {
+                    const x = (col - row / 2) * spacing;
+                    const y = -row * spacing;
+                    const pegGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+                    const peg = new THREE.Mesh(pegGeometry, pegMaterial);
+                    peg.position.set(x, y, 0);
+                    scene.add(peg);
+                    pegs.push(peg);
+                    
+                    const pegBody = new CANNON.Body({
+                        mass: 0,
+                        shape: new CANNON.Sphere(0.1),
+                        position: new CANNON.Vec3(x, y, 0)
+                    });
+                    world.addBody(pegBody);
+                }
+            }
+        }
+
+        function dropBall() {
+            if (balance > 0) {
+                balance -= 10;
+                localStorage.setItem("plinko_balance", balance);
+                document.getElementById("balanceDisplay").innerText = `Balance: $${balance}`;
+                
+                const ballGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+                const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xffd700 });
+                const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+                ball.position.set(0, 5, 0);
+                scene.add(ball);
+                balls.push(ball);
+                
+                const ballBody = new CANNON.Body({
+                    mass: 1,
+                    shape: new CANNON.Sphere(0.2),
+                    position: new CANNON.Vec3(0, 5, 0),
+                    velocity: new CANNON.Vec3((Math.random() - 0.5) * 3, -2, 0)
+                });
+                world.addBody(ballBody);
+                ball.userData.physicsBody = ballBody;
+            }
+        }
+
+        window.addEventListener("click", dropBall);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            world.step(1 / 60);
+            balls.forEach(ball => {
+                const body = ball.userData.physicsBody;
+                if (body) {
+                    ball.position.set(body.position.x, body.position.y, body.position.z);
+                    if (body.position.y < -10) {
+                        balance += Math.floor(Math.random() * 50) + 10;
+                        localStorage.setItem("plinko_balance", balance);
+                        document.getElementById("balanceDisplay").innerText = `Balance: $${balance}`;
+                        scene.remove(ball);
+                        world.removeBody(body);
+                    }
+                }
+            });
+            renderer.render(scene, camera);
+        }
+
+        createPegs();
+        animate();
+    </script>
+</body>
+</html>
