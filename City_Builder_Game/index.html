@@ -1,12 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <a href="/blackoutverse3.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
+    <style>
+        .back-button {
+            position: absolute; 
+            top: 10px; /* Distance from the top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Perfectly center it */
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: white; 
+            background-color: black; 
+            padding: 10px 30px; 
+            border-radius: 10px; 
+            transition: opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: .09; /* Hidden by default */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional glow effect */
+        }
+    
+        .back-button:hover {
+            opacity: 1; /* Fully visible on hover */
+            box-shadow: 0 0 15px rgba(40, 200, 48, 0.8); /* Green glow effect on hover */
+        }
+    </style>
+    
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>City Builder Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    
     <div id="instruct" >
         <h1># Instructions</h1>
         <h3>This game is about building a sustainable city</h3>
