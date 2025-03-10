@@ -5,6 +5,35 @@ document.addEventListener("keydown", function (event) {
     
   }
 });
+document.addEventListener("keydown", function (event) {
+  if (event.key.toLowerCase() === "f") {
+    
+    accelerate = false;
+  }
+  });
+document.addEventListener("keydown", function (event) {
+  if (event.key.toLowerCase() === "f") {
+    
+    accelerate = 100;
+   // Remove other vehicles
+  otherVehicles.forEach((vehicle) => {
+    // Remove the vehicle from the scene
+    scene.remove(vehicle.mesh);
+
+    // If it has hit-zone helpers then remove them as well
+    if (vehicle.mesh.userData.hitZone1)
+      scene.remove(vehicle.mesh.userData.hitZone1);
+    if (vehicle.mesh.userData.hitZone2)
+      scene.remove(vehicle.mesh.userData.hitZone2);
+    if (vehicle.mesh.userData.hitZone3)
+      scene.remove(vehicle.mesh.userData.hitZone3);
+  });
+  otherVehicles = [];
+  
+
+    
+  }
+});
 
 function addVehicle() {
   console.log("Vehicle added!"); // Replace this with your actual function logic
